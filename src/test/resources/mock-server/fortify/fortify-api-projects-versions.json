@@ -1,0 +1,1 @@
+{"data":[{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4","name":"1.0","id":4}],"count":1,"responseCode":200,"links":{"last":{"href":"https://delivery.gfi.fr/ssc/api/v1/projects/2/versions/?fields=id,name&start=0"},"first":{"href":"https://delivery.gfi.fr/ssc/api/v1/projects/2/versions/?fields=id,name&start=0"}}}

@@ -1,0 +1,144 @@
+{"data":[
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/FortifySecurityRating",
+"name":"Fortify Security Rating","id":"FortifySecurityRating","value":2.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/VDEN",
+"name":"Vulnerability Density (KLOC)","id":"VDEN","value":1.35,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/Issues",
+"name":"Total Issues","id":"Issues","value":208.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+
+
+
+
+
+
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/percentconfigurationIssues",
+"name":"Configuration Issues","id":"percentconfigurationIssues","value":2.88,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/TotalRemediationEffortHigh",
+"name":"Remediation Effort - High Issues","id":"TotalRemediationEffortHigh","value":57.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/TotalRemediationEffortMedium",
+"name":"Remediation Effort - Medium Issues","id":"TotalRemediationEffortMedium","value":11.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/TotalRemediationEffortLow",
+"name":"Remediation Effort - Low Issues","id":"TotalRemediationEffortLow","value":1104.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/TotalRemediationEffort",
+"name":"Remediation Effort Total","id":"TotalRemediationEffort","value":1160.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/PercentCriticalPriorityIssuesAudited",
+"name":"Critical Priority Issues Audited","id":"PercentCriticalPriorityIssuesAudited","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/PercentCriticalPriorityIssues",
+"name":"Critical Priority Issues","id":"PercentCriticalPriorityIssues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/PercentHighPriorityIssuesAudited",
+"name":"High Priority Issues Audited","id":"PercentHighPriorityIssuesAudited","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/PercentHighPriorityIssues",
+"name":"High Priority Issues","id":"PercentHighPriorityIssues","value":3.37,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/PercentAudited",
+"name":"Issues That Are Audited","id":"PercentAudited","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/percentCriticalExposure",
+"name":"Critical Exposure Issues","id":"percentCriticalExposure","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/TotalRemediationEffortCritical",
+"name":"Remediation Effort - Critical Issues","id":"TotalRemediationEffortCritical","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec_1_3_8_Issues",
+"name":"PCI DSS 3.0 Section 1.3.8 Issues","id":"pci_v3_0_sec_1_3_8_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec_2_1_Issues",
+"name":"PCI DSS 3.0 Section 2.1 Issues","id":"pci_v3_0_sec_2_1_Issues","value":17.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec3_2_Issues",
+"name":"PCI DSS 3.0 Section 3.2 Issues","id":"pci_v3_0_sec3_2_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec3_4_Issues",
+"name":"PCI DSS 3.0 Section 3.4 Issues","id":"pci_v3_0_sec3_4_Issues","value":17.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec3_6_1_Issues",
+"name":"PCI DSS 3.0 Section 3.6.1 Issues","id":"pci_v3_0_sec3_6_1_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec4_1_Issues",
+"name":"PCI DSS 3.0 Section 4.1 Issues","id":"pci_v3_0_sec4_1_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec4_2_Issues",
+"name":"PCI DSS 3.0 Section 4.2 Issues","id":"pci_v3_0_sec4_2_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec5_1_Issues",
+"name":"PCI DSS 3.0 Section 5.1 Issues","id":"pci_v3_0_sec5_1_Issues","value":6.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_2_Issues",
+"name":"PCI DSS 3.0 Section 6.2 Issues","id":"pci_v3_0_sec6_2_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_3_1_Issues",
+"name":"PCI DSS 3.0 Section 6.3.1 Issues","id":"pci_v3_0_sec6_3_1_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_1_Issues",
+"name":"PCI DSS 3.0 Section 6.5.1 Issues","id":"pci_v3_0_sec6_5_1_Issues","value":6.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_2_Issues",
+"name":"PCI DSS 3.0 Section 6.5.2 Issues","id":"pci_v3_0_sec6_5_2_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_3_Issues",
+"name":"PCI DSS 3.0 Section 6.5.3 Issues","id":"pci_v3_0_sec6_5_3_Issues","value":17.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_4_Issues",
+"name":"PCI DSS 3.0 Section 6.5.4 Issues","id":"pci_v3_0_sec6_5_4_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_5_Issues",
+"name":"PCI DSS 3.0 Section 6.5.5 Issues","id":"pci_v3_0_sec6_5_5_Issues","value":17.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_6_Issues",
+"name":"PCI DSS 3.0 Section 6.5.6 Issues","id":"pci_v3_0_sec6_5_6_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_7_Issues",
+"name":"PCI DSS 3.0 Section 6.5.7 Issues","id":"pci_v3_0_sec6_5_7_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_8_Issues",
+"name":"PCI DSS 3.0 Section 6.5.8 Issues","id":"pci_v3_0_sec6_5_8_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_9_Issues",
+"name":"PCI DSS 3.0 Section 6.5.9 Issues","id":"pci_v3_0_sec6_5_9_Issues","value":9.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec6_5_10_Issues",
+"name":"PCI DSS 3.0 Section 6.5.10 Issues","id":"pci_v3_0_sec6_5_10_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec7_1_2_Issues",
+"name":"PCI DSS 3.0 Section 7.1.2 Issues","id":"pci_v3_0_sec7_1_2_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec7_2_Issues",
+"name":"PCI DSS 3.0 Section 7.2 Issues","id":"pci_v3_0_sec7_2_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec8_1_8_Issues",
+"name":"PCI DSS 3.0 Section 8.1.8 Issues","id":"pci_v3_0_sec8_1_8_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec8_2_1_Issues",
+"name":"PCI DSS 3.0 Section 8.2.1 Issues","id":"pci_v3_0_sec8_2_1_Issues","value":17.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec8_7_Issues",
+"name":"PCI DSS 3.0 Section 8.7 Issues","id":"pci_v3_0_sec8_7_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec10_2_1_Issues",
+"name":"PCI DSS 3.0 Section 10.2.1 Issues","id":"pci_v3_0_sec10_2_1_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec10_2_4_Issues",
+"name":"PCI DSS 3.0 Section 10.2.4 Issues","id":"pci_v3_0_sec10_2_4_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec10_3_4_Issues",
+"name":"PCI DSS 3.0 Section 10.3.4 Issues","id":"pci_v3_0_sec10_3_4_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"},
+
+{"_href":"https://delivery.gfi.fr:443/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/pci_v3_0_sec10_5_2_Issues",
+"name":"PCI DSS 3.0 Section 10.5.2 Issues","id":"pci_v3_0_sec10_5_2_Issues","value":0.0,"timestamp":"2016-06-05T12:29:47.000+0000"}],
+
+"count":44,"responseCode":200,"links":{"last":{"href":"https://delivery.gfi.fr/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/?start=0"},
+"first":{"href":"https://delivery.gfi.fr/ssc/api/v1/projectVersions/4/performanceIndicatorHistories/?start=0"}}}

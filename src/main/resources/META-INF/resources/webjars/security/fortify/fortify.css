@@ -1,0 +1,12 @@
+.masonry-container .node.service-security-fortify.mode-th-list table.subscriptions th.features {
+	width: 52px;
+}
+.masonry-container .node.service-security-fortify.mode-th-large table.subscriptions th.features {
+	width: 50px;
+}
+.masonry-container .node.service-security-fortify table.subscriptions th.features {
+	width: 45px;
+}
+.service-security-fortify .features .details span {
+	cursor: default;
+}

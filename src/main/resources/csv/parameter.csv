@@ -1,0 +1,6 @@
+id;owner.id;data;mandatory;type;mode;secured
+service:security:fortify:pkey;service:security:fortify;;true;INTEGER;;
+service:security:fortify:version;service:security:fortify;;true;INTEGER;;
+service:security:fortify:url;service:security:fortify;;true;TEXT;;
+service:security:fortify:user;service:security:fortify;;true;TEXT;;true
+service:security:fortify:password;service:security:fortify;;true;TEXT;;true

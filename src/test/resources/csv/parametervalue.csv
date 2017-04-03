@@ -1,0 +1,6 @@
+parameter.id;data;node.id;subscription.id!
+service:security:fortify:url;http://localhost:8120;service:security:fortify:dig;
+service:security:fortify:user;secret;service:security:fortify:dig;
+service:security:fortify:password;secret;service:security:fortify:dig;
+service:security:fortify:pkey;2;;1
+service:security:fortify:version;4;;1
