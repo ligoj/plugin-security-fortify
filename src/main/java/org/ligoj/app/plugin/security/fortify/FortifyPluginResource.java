@@ -111,12 +111,6 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	@Override
-	public String getLastVersion() {
-		// Not yet implemented
-		return null;
-	}
-
-	@Override
 	public boolean checkStatus(final String node, final Map<String, String> parameters) throws Exception {
 		return StringUtils.isNotEmpty(this.getVersion(parameters));
 	}
