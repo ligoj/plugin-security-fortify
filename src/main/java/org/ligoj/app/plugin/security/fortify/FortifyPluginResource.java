@@ -115,12 +115,12 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	@Override
-	public boolean checkStatus(final String node, final Map<String, String> parameters) throws Exception {
+	public boolean checkStatus(final Map<String, String> parameters) throws Exception {
 		return StringUtils.isNotEmpty(this.getVersion(parameters));
 	}
 
 	@Override
-	public SubscriptionStatusWithData checkSubscriptionStatus(final String node, final Map<String, String> parameters)
+	public SubscriptionStatusWithData checkSubscriptionStatus(final Map<String, String> parameters)
 			throws Exception {
 		final SubscriptionStatusWithData nodeStatusWithData = new SubscriptionStatusWithData();
 		nodeStatusWithData.put("project", validateProject(parameters));
