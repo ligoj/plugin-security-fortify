@@ -28,9 +28,7 @@ import org.ligoj.app.model.ParameterValue;
 import org.ligoj.app.model.Project;
 import org.ligoj.app.model.Subscription;
 import org.ligoj.app.plugin.security.SecurityResource;
-import org.ligoj.app.plugin.security.fortify.FortifyPluginResource;
-import org.ligoj.app.plugin.security.fortify.FortifyProject;
-import org.ligoj.app.resource.node.NodeResource;
+import org.ligoj.app.resource.node.ParameterValueResource;
 import org.ligoj.app.resource.subscription.SubscriptionResource;
 import org.ligoj.bootstrap.core.INamableBean;
 import org.ligoj.bootstrap.core.validation.ValidationJsonException;
@@ -54,7 +52,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	private FortifyPluginResource resource;
 
 	@Autowired
-	private NodeResource nodeResource;
+	private ParameterValueResource pvResource;
 
 	@Autowired
 	private SubscriptionResource subscriptionResource;
@@ -128,7 +126,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	public void validateProjectNotFound() throws Exception {
 		prepareMockProjectVersions();
 
-		final Map<String, String> parameters = nodeResource.getParametersAsMap("service:security:fortify:dig");
+		final Map<String, String> parameters = pvResource.getNodeParameters("service:security:fortify:dig");
 		parameters.put(FortifyPluginResource.PARAMETER_KEY, "2");
 		parameters.put(FortifyPluginResource.PARAMETER_VERSION, "0"); // no
 																		// version
@@ -142,7 +140,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	public void validateProject() throws Exception {
 		prepareMockProjectVersions();
 
-		final Map<String, String> parameters = nodeResource.getParametersAsMap("service:security:fortify:dig");
+		final Map<String, String> parameters = pvResource.getNodeParameters("service:security:fortify:dig");
 		parameters.put(FortifyPluginResource.PARAMETER_KEY, "2");
 		parameters.put(FortifyPluginResource.PARAMETER_VERSION, "4");
 

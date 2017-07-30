@@ -269,7 +269,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	private Collection<FortifyProject> findAll(final String node, final String url, final String criteria)
 			throws IOException {
 		// Check the user can log-in to Fortify
-		final Collection<Map<String, Object>> data = getFortifyResource(this.nodeResource.getParametersAsMap(node),
+		final Collection<Map<String, Object>> data = getFortifyResource(this.pvResource.getNodeParameters(node),
 				url);
 		final Format format = new NormalizeFormat();
 		final String formatCriteria = format.format(StringUtils.trimToEmpty(criteria));
