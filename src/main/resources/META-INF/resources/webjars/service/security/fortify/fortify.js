@@ -2,7 +2,7 @@ define(function () {
 	var current = {
 
 		configureSubscriptionParameters: function (configuration) {
-			current.$super('registerXServiceSelect2')(configuration, 'service:security:fortify:pkey', 'service/security/fortify/', undefined, false, current.loadFortifyProjectVersions);
+			current.$super('registerXServiceSelect2')(configuration, 'service:security:fortify:pkey', 'service/security/fortify/', null, false, current.loadFortifyProjectVersions);
 			current.registerFortifyProjectVersion(configuration, 'service:security:fortify:version');
 		},
 
@@ -19,7 +19,7 @@ define(function () {
 		renderFeatures: function (subscription) {
 			// Add Project group link
 			var url = subscription.parameters['service:security:fortify:url'] + '/flex/index.jsp' + (subscription.parameters['service:security:fortify:version'] ? '#projectVersionId=' + subscription.parameters['service:security:fortify:version'] : '');
-			var result = current.$super('renderServicelink')('home', url, 'service:security', undefined, ' target="_blank"');
+			var result = current.$super('renderServicelink')('home', url, 'service:security', null, ' target="_blank"');
 			// Help
 			result += current.$super('renderServiceHelpLink')(subscription.parameters, 'service:security:help');
 			return result;
