@@ -230,7 +230,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	public List<FortifyProject> findAllByName(@PathParam("node") final String node,
 			@PathParam("criteria") final String criteria) throws IOException {
 		return inMemoryPagination
-				.newPage(findAll(node, "api/v1/projects?fields=id,name", criteria), new PageRequest(0, 10))
+				.newPage(findAll(node, "api/v1/projects?fields=id,name", criteria), PageRequest.of(0, 10))
 				.getContent();
 	}
 
