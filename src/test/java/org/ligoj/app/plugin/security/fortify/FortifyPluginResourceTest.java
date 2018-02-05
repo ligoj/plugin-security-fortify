@@ -97,7 +97,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void getVersionFailed() throws Exception {
+	public void getVersionFailed() {
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
 			resource.getVersion(subscription);
@@ -191,7 +191,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusSubscriptionStatusException() throws Exception {
+	public void checkStatusSubscriptionStatusException() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
@@ -234,7 +234,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNoConnection() throws Exception {
+	public void checkStatusNoConnection() {
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
 			resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription));
@@ -242,7 +242,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNotAuthentication() throws Exception {
+	public void checkStatusNotAuthentication() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check")).willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
@@ -251,7 +251,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNotAuthenticationNotCorrectLocation() throws Exception {
+	public void checkStatusNotAuthenticationNotCorrectLocation() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_MOVED_TEMPORARILY).withHeader("location", "any.jsp")));
 		httpServer.start();
@@ -261,7 +261,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNotAuthenticationNoLocation() throws Exception {
+	public void checkStatusNotAuthenticationNoLocation() {
 		httpServer.stubFor(
 				post(urlPathEqualTo("/j_spring_security_check")).willReturn(aResponse().withStatus(HttpStatus.SC_MOVED_TEMPORARILY)));
 		httpServer.start();
@@ -271,7 +271,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNoToken() throws Exception {
+	public void checkStatusNoToken() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_MOVED_TEMPORARILY).withHeader("location", "index.jsp")));
 		httpServer.stubFor(get(urlPathEqualTo("/flex/index.jsp")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
@@ -282,7 +282,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNoTokenContent() throws Exception {
+	public void checkStatusNoTokenContent() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_MOVED_TEMPORARILY).withHeader("location", "index.jsp")));
 		httpServer.stubFor(get(urlPathEqualTo("/flex/index.jsp")).willReturn(aResponse().withStatus(HttpStatus.SC_OK).withBody("any")));
@@ -308,7 +308,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNotAccess() throws Exception {
+	public void checkStatusNotAccess() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
@@ -346,7 +346,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void findAllByNameInvalidConnection() throws Exception {
+	public void findAllByNameInvalidConnection() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
@@ -355,7 +355,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void findAllByNameInvalidUrl() throws Exception {
+	public void findAllByNameInvalidUrl() {
 		httpServer.stubFor(post(urlPathEqualTo("/j_spring_security_check")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
