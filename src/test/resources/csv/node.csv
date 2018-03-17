@@ -1,4 +1,4 @@
 id;name;refined.id;mode;uiClasses;tag;tagUiClasses
-service:security;Security;;LINK;fa fa-shield;technical;fa fa-industry
+service:security;Security;;LINK;fas fa-shield-alt;technical;fa fa-industry
 service:security:fortify;Fortify;service:security;LINK;;;
 service:security:fortify:dig;Fortify DIG;service:security:fortify;LINK;;;
