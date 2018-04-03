@@ -308,7 +308,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 			final FortifyCurlProcessor processor) throws IOException {
 
 		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + resource;
-		final CurlRequest request = new CurlRequest("GET", url, null);
+		final CurlRequest request = new CurlRequest("GET", url, null, "Accept: application/json");
 		request.setSaveResponse(true);
 		processor.process(request);
 
