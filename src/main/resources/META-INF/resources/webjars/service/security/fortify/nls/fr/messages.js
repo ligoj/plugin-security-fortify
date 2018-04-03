@@ -5,7 +5,7 @@ define({
 	"service:security:fortify:pkey" : "Projet",
 	"service:security:fortify:url" : "URL",
 	"service:security:fortify:issues" : "Problèmes",
-	"service:security:fortify:vden" : "Densité de vulnérabilité (KLOC)",
+	"service:security:fortify:vden" : "Densité de vulnérabilité (10KLOC)",
 	"service:security:fortify:rating" : "Note de sécurité Fortify",
 	"error" : {
 		"fortify-login" : "Echec de l'authentification"
