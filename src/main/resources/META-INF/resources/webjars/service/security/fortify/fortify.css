@@ -10,3 +10,38 @@
 .service-security-fortify .features .details span {
 	cursor: default;
 }
+
+.service-security-fortify .key.truncate, .service-security-fortify .key .carousel-inner {
+	overflow: visible
+}
+.service-security-fortify .pie.zoomed {
+	position: absolute;
+ 	z-index: 2000;
+}
+.service-security-fortify .pie canvas {
+	position: relative;
+}
+.service-security-fortify.node .pie.zoomed.zoomed2 canvas  {
+	left: -56px;
+}
+.service-security-fortify .pie.zoomed canvas {
+    -webkit-transform: scale(.33); 
+    -ms-transform: scale(.33); 
+    -moz-transform: scale(.33);
+    transform: scale(.33);
+	left: -20px;
+	top: -22px;
+}
+.service-security-fortify .pie.zoomed.zoomed2 canvas {
+    -webkit-transition: all 200ms ease-in;
+    -webkit-transform: scale(1); 
+    -ms-transition: all 200ms ease-in;
+    -ms-transform: scale(1); 
+    -moz-transition: all 200ms ease-in;
+    -moz-transform: scale(1);
+    transition: all 200ms ease-in;
+    transform: scale(1);
+}
+.service-security-fortify .features .details canvas:hover {
+	cursor: pointer;
+}

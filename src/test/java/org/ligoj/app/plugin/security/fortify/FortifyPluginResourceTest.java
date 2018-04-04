@@ -38,8 +38,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import net.sf.ehcache.CacheManager;
-
 /**
  * Test class of {@link FortifyPluginResource}
  */
@@ -70,7 +68,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 		resource.getKey();
 
 		// Invalidate Fortify cache
-		CacheManager.getInstance().getCache("curl-tokens").removeAll();
+		cacheManager.getCache("curl-tokens").clear();
 	}
 
 	/**

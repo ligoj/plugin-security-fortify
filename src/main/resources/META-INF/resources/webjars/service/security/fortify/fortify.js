@@ -28,20 +28,95 @@ define(function () {
 		/**
 		 * Render Sonar details : id, name and pkey.
 		 */
-		renderDetailsKey: function (subscription) {
+		renderDetailsKey: function (subscription, $td) {
+			var measures = subscription.data.project.measures;
+			var audited = parseFloat(measures.PercentAudited || 0, 10);
+			var auditedClass = '';
+			var inProgress = true;
+			var auditedKey = 'in-progress';
+			if (audited === 100) {
+				auditedClass = ' text-success';
+				auditedKey = 'complete';
+				inProgress = false;
+			} else if (audited >= 90) {
+				auditedClass = ' faa-flash animated text-primary';
+			} else if (audited >= 80) {
+				auditedClass = ' faa-flash animated text-warning';
+			} else if (audited > 0) {
+				// Audit in progress
+				auditedClass = ' text-danger';
+				auditedKey = 'new';
+				inProgress = false;
+			}
+
+			window.setTimeout(function () {
+				if (inProgress) {
+					current.pieAudits([parseFloat(audited, 10), 100 - parseFloat(audited, 10)], subscription, $td.find('.security-fortify-audit-progress'), ['#000000', '#FFFFFF'],['service:security:fortify:audit-pie-audited', 'service:security:fortify:audit-pie-not-audited']);
+				}
+				current.pieAudits([parseFloat(measures.TotalRemediationEffortLow, 10), parseFloat(measures.TotalRemediationEffortMedium, 10), parseFloat(measures.TotalRemediationEffortHigh, 10)], subscription, $td.find('.security-fortify-audit-effort'), ['#1666ad', '#bfca24', '#d02f2f'],['service:security:fortify:effort-pie-low', 'service:security:fortify:effort-pie-medium', 'service:security:fortify:effort-pie-high']);
+			}, 50);
+
 			return current.$super('generateCarousel')(subscription, [
 				['id', current.renderKey(subscription)],
 				['service:security:fortify:pkey', subscription.data.project.name + ' - ' + subscription.data.project.version],
-				['service:security:fortify:vden', subscription.data.project.measures.VDEN],
-				['service:security:fortify:issues', current.$super('icon')('bug', 'service:security:fortify:issues') + ~~subscription.data.project.measures.Issues]
+				['service:security:fortify:vden', measures.VDEN],
+				['service:security:fortify:issues', current.$super('icon')('bug', 'service:security:fortify:issues') + Math.ceil(parseFloat((measures.Issues || '0'), 10))],
+				['service:security:fortify:audit', current.$super('icon')('stethoscope' + auditedClass,
+					Handlebars.compile(current.$messages['service:security:fortify:audit-help-' + auditedKey])([audited, measures.PercentCriticalPriorityIssuesAudited || 0]))
+					+ Handlebars.compile(current.$messages['service:security:fortify:audit-' + auditedKey])(audited)
+					+ (inProgress ? ' <span class="security-fortify-audit-progress pie"></span>' : '')
+					+ ' &nbsp; <i class="fas fa-wrench" data-toggle="tooltip" title="' + Handlebars.compile(current.$messages['service:security:fortify:effort-help'])(measures.TotalRemediationEffort) + '"></i> '
+					+ Handlebars.compile(current.$messages['service:security:fortify:effort'])(measures.TotalRemediationEffort)
+					+ ' <span class="security-fortify-audit-effort pie"></span>']
 			], 1);
 		},
 
+		pieAudits: function (data, subscription, $spark, colors, messages) {
+			require(['sparkline'], function () {
+				current.setupSparkline(data, $spark, colors, messages, '20px');
+
+				// Zoom and auto update tooltips
+				$spark.on('mouseenter', function (e) {
+					if (!$spark.is('.zoomed')) {
+						$spark.addClass('zoomed');
+						current.setupSparkline(data, $spark, colors, messages, '64px');
+						window.setTimeout(function () {
+							$spark.addClass('zoomed2');
+							$spark.on('mouseout', function (e2) {
+								$spark.removeClass('zoomed');
+								current.setupSparkline(data, $spark, colors, messages, '20px');
+								window.setTimeout(function () {
+									$spark.removeClass('zoomed2');
+								}, 50);
+							})
+						}, 50);
+					}
+				});
+			});
+		},
+
+		setupSparkline: function (data, $spark, colors, messages, size) {
+			$spark.find('canvas').remove();
+			$spark.sparkline(data, {
+				type: 'pie',
+				sliceColors: colors,
+				width: size,
+				height: size,
+				fillColor: 'black',
+				borderWidth: '2',
+				borderColor: '#ffffff',
+				tooltipFormatter: function (sparkline, options, fields) {
+					return Handlebars.compile(current.$messages[messages[fields.offset]])([current.$super('roundPercent')(fields.percent), fields.value, sparkline.total]);
+				}
+			});
+		},
+
 		/**
-		 * Display the Fortify rating : 0...5
+		 * Display the Fortify rating : 1...5
 		 */
 		renderDetailsFeatures: function (subscription) {
-			var rating = (subscription.data.project.measures && subscription.data.project.measures.FortifySecurityRating && ~~subscription.data.project.measures.FortifySecurityRating) || 0;
+			var measures = subscription.data.project.measures;
+			var rating = measures && measures.FortifySecurityRating || 0;
 			var color = rating && ['default', 'danger', 'warning', 'warning', 'primary', 'success'][rating];
 			return color ? '<span data-toggle="tooltip" title="' + current.$messages['service:security:fortify:rating'] + '" class="label label-' + color + '">' + rating + '</span>' : '';
 		},
