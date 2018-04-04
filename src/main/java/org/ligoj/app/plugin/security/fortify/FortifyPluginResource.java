@@ -22,6 +22,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.ligoj.app.api.SubscriptionStatusWithData;
 import org.ligoj.app.plugin.security.SecurityResource;
 import org.ligoj.app.plugin.security.SecurityServicePlugin;
@@ -32,6 +33,7 @@ import org.ligoj.app.resource.plugin.CurlRequest;
 import org.ligoj.bootstrap.core.json.InMemoryPagination;
 import org.ligoj.bootstrap.core.validation.ValidationJsonException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -97,9 +99,9 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public String getVersion(final Map<String, String> parameters) throws Exception {
-		final FortifyCurlProcessor processor = new FortifyCurlProcessor();
+		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
 		// Check the user can log-in to Fortify
-		authenticate(parameters, processor);
+		authenticate(parameters, processor, false);
 
 		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + "api/v1/userSession/info";
 		final CurlRequest request = new CurlRequest("POST", url, null, "Accept: application/json");
@@ -120,18 +122,25 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	@Override
-	public SubscriptionStatusWithData checkSubscriptionStatus(final Map<String, String> parameters)
-			throws Exception {
+	public SubscriptionStatusWithData checkSubscriptionStatus(final Map<String, String> parameters) throws Exception {
 		final SubscriptionStatusWithData nodeStatusWithData = new SubscriptionStatusWithData();
 		nodeStatusWithData.put("project", validateProject(parameters));
 		return nodeStatusWithData;
 	}
 
+	@Autowired
+	private CacheManager cacheManager;
+
 	/**
 	 * Cache the API token.
 	 */
-	protected String authenticate(final String url, final String authentication, final FortifyCurlProcessor processor) {
-		return curlCacheToken.getTokenCache(FortifyProject.class, url + "##" + authentication, k -> {
+	protected String authenticate(final String url, final String authentication, final FortifyCurlProcessor processor,
+			final boolean force) {
+		final String cacheToken = url + "##" + authentication;
+		if (force) {
+			cacheManager.getCache("curl-tokens").evict(cacheToken);
+		}
+		return curlCacheToken.getTokenCache(FortifyProject.class, cacheToken, k -> {
 
 			// Authentication request
 			final List<CurlRequest> requests = new ArrayList<>();
@@ -161,6 +170,16 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		}, 1, () -> new ValidationJsonException(PARAMETER_URL, "fortify-login"));
 	}
 
+	private FortifyCurlProcessor newFortifyCurlProcessor(final Map<String, String> parameters) {
+		return new FortifyCurlProcessor(r -> {
+			if (r.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
+				// Authorization failed, expired token, retry once
+				authenticate(parameters, (FortifyCurlProcessor) r.getProcessor(), true);
+			}
+			return false;
+		});
+	}
+
 	/**
 	 * Validate the project configuration.
 	 * 
@@ -169,11 +188,8 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 * @return true if the project exists.
 	 */
 	protected FortifyProject validateProject(final Map<String, String> parameters) throws IOException {
-		final FortifyCurlProcessor processor = new FortifyCurlProcessor();
+		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
 		try {
-			// Authenticate
-			authenticate(parameters, processor);
-
 			// Check the project exists and get the name
 			@SuppressWarnings("unchecked")
 			final Map<String, Object> projectMap = MapUtils
@@ -215,8 +231,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	/**
-	 * Find the spaces matching to the given criteria.Look into space key, and
-	 * space name.
+	 * Find the spaces matching to the given criteria.Look into space key, and space name.
 	 * 
 	 * @param criteria
 	 *            the search criteria.
@@ -230,8 +245,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	public List<FortifyProject> findAllByName(@PathParam("node") final String node,
 			@PathParam("criteria") final String criteria) throws IOException {
 		return inMemoryPagination
-				.newPage(findAll(node, "api/v1/projects?fields=id,name", criteria), PageRequest.of(0, 10))
-				.getContent();
+				.newPage(findAll(node, "api/v1/projects?fields=id,name", criteria), PageRequest.of(0, 10)).getContent();
 	}
 
 	/**
@@ -269,8 +283,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	private Collection<FortifyProject> findAll(final String node, final String url, final String criteria)
 			throws IOException {
 		// Check the user can log-in to Fortify
-		final Collection<Map<String, Object>> data = getFortifyResource(this.pvResource.getNodeParameters(node),
-				url);
+		final Collection<Map<String, Object>> data = getFortifyResource(this.pvResource.getNodeParameters(node), url);
 		final Format format = new NormalizeFormat();
 		final String formatCriteria = format.format(StringUtils.trimToEmpty(criteria));
 
@@ -284,15 +297,14 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	/**
-	 * Create an authenticated request and return the data. The created
-	 * processor is entirely managed : opened and closed.
+	 * Create an authenticated request and return the data. The created processor is entirely managed : opened and
+	 * closed.
 	 */
 	@SuppressWarnings("unchecked")
 	private Collection<Map<String, Object>> getFortifyResource(final Map<String, String> parameters,
 			final String resource) throws IOException {
-		final FortifyCurlProcessor processor = new FortifyCurlProcessor();
+		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
 		try {
-			authenticate(parameters, processor);
 			return CollectionUtils
 					.emptyIfNull((List<Map<String, Object>>) getFortifyResource(parameters, resource, processor));
 		} finally {
@@ -301,11 +313,15 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	/**
-	 * Fetch given node from parameters and given URL, and return the JSON
-	 * object.
+	 * Fetch given node from parameters and given URL, and return the JSON object.
 	 */
 	private Object getFortifyResource(final Map<String, String> parameters, final String resource,
 			final FortifyCurlProcessor processor) throws IOException {
+
+		// Authenticate is required for the first time
+		if (processor.getFortifyToken() == null) {
+			authenticate(parameters, processor, false);
+		}
 
 		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + resource;
 		final CurlRequest request = new CurlRequest("GET", url, null, "Accept: application/json");
@@ -331,11 +347,12 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	/**
 	 * Prepare an authenticated connection to Fortify
 	 */
-	protected void authenticate(final Map<String, String> parameters, final FortifyCurlProcessor processor) {
+	protected void authenticate(final Map<String, String> parameters, final FortifyCurlProcessor processor,
+			final boolean force) {
 		// Compute the fortify token and store it in the processor
-		processor.setFortifyToken(
-				authenticate(parameters.get(PARAMETER_URL), "j_username=" + parameters.get(PARAMETER_USER)
-						+ "&j_password=" + StringUtils.trimToEmpty(parameters.get(PARAMETER_PASSWORD)), processor));
+		final String authentication = "j_username=" + parameters.get(PARAMETER_USER) + "&j_password="
+				+ StringUtils.trimToEmpty(parameters.get(PARAMETER_PASSWORD));
+		processor.setFortifyToken(authenticate(parameters.get(PARAMETER_URL), authentication, processor, force));
 	}
 
 }

@@ -1,25 +1,33 @@
 package org.ligoj.app.plugin.security.fortify;
 
+import java.util.function.Function;
+
 import org.ligoj.app.resource.plugin.CurlProcessor;
 import org.ligoj.app.resource.plugin.CurlRequest;
 import org.ligoj.app.resource.plugin.HttpResponseCallback;
 
+import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Forty curl processor handling CSRF token.
  */
-@Setter
 public class FortifyCurlProcessor extends CurlProcessor {
 
 	/**
 	 * Special callback for Fortify login check.
 	 */
 	public static final HttpResponseCallback LOGIN_CALLBACK = new FortifyLoginHttpResponseCallback();
+	
+	public FortifyCurlProcessor(Function<CurlRequest, Boolean> authenticate) {
+		super.replay = authenticate;
+	}
 
 	/**
 	 * Token used to authenticate request
 	 */
+	@Setter
+	@Getter
 	private String fortifyToken;
 
 	@Override
