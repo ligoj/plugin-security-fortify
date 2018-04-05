@@ -17,6 +17,8 @@
 .service-security-fortify .pie.zoomed {
 	position: absolute;
  	z-index: 2000;
+ 	width: 30px;
+ 	height: 20px;
 }
 .service-security-fortify .pie canvas {
 	position: relative;
@@ -29,17 +31,17 @@
     -ms-transform: scale(.33); 
     -moz-transform: scale(.33);
     transform: scale(.33);
-	left: -20px;
-	top: -22px;
+	left: -50px;
+	top: -52px;
 }
 .service-security-fortify .pie.zoomed.zoomed2 canvas {
     -webkit-transition: all 200ms ease-in;
     -webkit-transform: scale(1); 
-    -ms-transition: all 200ms ease-in;
+    -ms-transition: all 100ms ease-in;
     -ms-transform: scale(1); 
-    -moz-transition: all 200ms ease-in;
+    -moz-transition: all 100ms ease-in;
     -moz-transform: scale(1);
-    transition: all 200ms ease-in;
+    transition: all 100ms ease-in;
     transform: scale(1);
 }
 .service-security-fortify .features .details canvas:hover {

@@ -79,10 +79,10 @@ define(function () {
 				$spark.on('mouseenter', function (e) {
 					if (!$spark.is('.zoomed')) {
 						$spark.addClass('zoomed');
-						current.setupSparkline(data, $spark, colors, messages, '64px');
+						current.setupSparkline(data, $spark, colors, messages, '128px');
 						window.setTimeout(function () {
 							$spark.addClass('zoomed2');
-							$spark.on('mouseout', function (e2) {
+							$spark.find('canvas').on('mouseleave', function (e2) {
 								$spark.removeClass('zoomed');
 								current.setupSparkline(data, $spark, colors, messages, '20px');
 								window.setTimeout(function () {
@@ -103,7 +103,7 @@ define(function () {
 				width: size,
 				height: size,
 				fillColor: 'black',
-				borderWidth: '2',
+				borderWidth: size === "128px" ? 4 : 2,
 				borderColor: '#ffffff',
 				tooltipFormatter: function (sparkline, options, fields) {
 					return Handlebars.compile(current.$messages[messages[fields.offset]])([current.$super('roundPercent')(fields.percent), fields.value, sparkline.total]);
