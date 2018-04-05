@@ -1,8 +1,8 @@
 package org.ligoj.app.plugin.security.fortify;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.Format;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -12,18 +12,19 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.apache.http.auth.AUTH;
 import org.ligoj.app.api.SubscriptionStatusWithData;
 import org.ligoj.app.plugin.security.SecurityResource;
 import org.ligoj.app.plugin.security.SecurityServicePlugin;
@@ -108,7 +109,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		authenticate(parameters, processor, false);
 
 		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + "api/v1/userSession/info";
-		final CurlRequest request = new CurlRequest("POST", url, null, "Accept: application/json");
+		final CurlRequest request = new CurlRequest("POST", url, "{}", "Accept: application/json");
 		request.setSaveResponse(true);
 		processor.process(request);
 		final String content = ObjectUtils.defaultIfNull(request.getResponse(), "{}");
@@ -132,47 +133,40 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		return nodeStatusWithData;
 	}
 
+	private static final Base64 BASE64_CODEC = new Base64(0);
+
 	/**
 	 * Cache the API token.
 	 */
-	protected String authenticate(final String url, final String authentication, final FortifyCurlProcessor processor,
-			final boolean force) {
-		final String cacheToken = url + DigestUtils.sha256Hex("##" + authentication);
+	protected String authenticate(final String url, final String user, final String password,
+			final FortifyCurlProcessor processor, final boolean force) {
+		final String cacheToken = url + DigestUtils.sha256Hex("##" + user + "/" + password);
 		if (force) {
 			// Replace the token
-			final String token = getFortifyToken(url, authentication, processor);
+			final String token = getFortifyToken(url, user, password, processor);
 			cacheManager.getCache("curl-tokens").put(cacheToken, token);
 			return token;
 		}
 		return curlCacheToken.getTokenCache(FortifyProject.class, cacheToken, k -> {
-			return getFortifyToken(url, authentication, processor);
+			return getFortifyToken(url, user, password, processor);
 		}, 1, () -> new ValidationJsonException(PARAMETER_URL, "fortify-login"));
 	}
 
-	private String getFortifyToken(final String url, final String authentication,
+	private String getFortifyToken(final String url, final String user, final String password,
 			final FortifyCurlProcessor processor) {
-		// Authentication request
-		final List<CurlRequest> requests = new ArrayList<>();
-		requests.add(new CurlRequest(HttpMethod.POST, url + "/j_spring_security_check", authentication + "&hash=",
-				FortifyCurlProcessor.LOGIN_CALLBACK,
-				"Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"));
-
-		// used to obtain the Fortify token into the page's content.
-		final CurlRequest requestIndex = new CurlRequest(HttpMethod.GET,
-				StringUtils.appendIfMissing(url, "/") + "flex/index.jsp", "",
-				"Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-		requestIndex.setSaveResponse(true);
-
-		requests.add(requestIndex);
-		if (!processor.process(requests)) {
+		// Use the preempted authentication processor
+		processor.setFortifyToken(null);
+		final String content = processor.get(url + "/api/v1/auth/token", "Accept:application/json", AUTH.WWW_AUTH_RESP
+				+ ":Basic " + BASE64_CODEC.encodeToString((user + ':' + password).getBytes(StandardCharsets.UTF_8)));
+		if (content == null) {
 			return null;
 		}
 
-		// try to obtain the fortify's token.
-		final String content = ObjectUtils.defaultIfNull(requestIndex.getResponse(), "");
-		final Pattern pattern = Pattern.compile("FortifyToken ([\\w]+)");
+		// Get the token.
+		final Pattern pattern = Pattern.compile("\"token\"\\s*:\\s*\"([^\"]+)\"");
 		final Matcher matcher = pattern.matcher(content);
 		if (!matcher.find()) {
+			// Something goes wrong
 			return null;
 		}
 		return matcher.group(1);
@@ -358,9 +352,8 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	protected void authenticate(final Map<String, String> parameters, final FortifyCurlProcessor processor,
 			final boolean force) {
 		// Compute the fortify token and store it in the processor
-		final String authentication = "j_username=" + parameters.get(PARAMETER_USER) + "&j_password="
-				+ StringUtils.trimToEmpty(parameters.get(PARAMETER_PASSWORD));
-		processor.setFortifyToken(authenticate(parameters.get(PARAMETER_URL), authentication, processor, force));
+		processor.setFortifyToken(authenticate(parameters.get(PARAMETER_URL), parameters.get(PARAMETER_USER),
+				StringUtils.trimToEmpty(parameters.get(PARAMETER_PASSWORD)), processor, force));
 	}
 
 }
