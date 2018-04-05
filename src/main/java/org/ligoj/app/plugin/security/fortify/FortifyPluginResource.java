@@ -18,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -91,6 +92,9 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	@Autowired
 	private CurlCacheToken curlCacheToken;
 
+	@Autowired
+	private CacheManager cacheManager;
+
 	@Override
 	public String getKey() {
 		return KEY;
@@ -128,46 +132,50 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		return nodeStatusWithData;
 	}
 
-	@Autowired
-	private CacheManager cacheManager;
-
 	/**
 	 * Cache the API token.
 	 */
 	protected String authenticate(final String url, final String authentication, final FortifyCurlProcessor processor,
 			final boolean force) {
-		final String cacheToken = url + "##" + authentication;
+		final String cacheToken = url + DigestUtils.sha256Hex("##" + authentication);
 		if (force) {
-			cacheManager.getCache("curl-tokens").evict(cacheToken);
+			// Replace the token
+			final String token = getFortifyToken(url, authentication, processor);
+			cacheManager.getCache("curl-tokens").put(cacheToken, token);
+			return token;
 		}
 		return curlCacheToken.getTokenCache(FortifyProject.class, cacheToken, k -> {
-
-			// Authentication request
-			final List<CurlRequest> requests = new ArrayList<>();
-			requests.add(new CurlRequest(HttpMethod.POST, url + "/j_spring_security_check", authentication + "&hash=",
-					FortifyCurlProcessor.LOGIN_CALLBACK,
-					"Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"));
-
-			// used to obtain the Fortify token into the page's content.
-			final CurlRequest requestIndex = new CurlRequest(HttpMethod.GET,
-					StringUtils.appendIfMissing(url, "/") + "flex/index.jsp", "",
-					"Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-			requestIndex.setSaveResponse(true);
-
-			requests.add(requestIndex);
-			if (!processor.process(requests)) {
-				return null;
-			}
-
-			// try to obtain the fortify's token.
-			final String content = ObjectUtils.defaultIfNull(requestIndex.getResponse(), "");
-			final Pattern pattern = Pattern.compile("FortifyToken ([\\w]+)");
-			final Matcher matcher = pattern.matcher(content);
-			if (!matcher.find()) {
-				return null;
-			}
-			return matcher.group(1);
+			return getFortifyToken(url, authentication, processor);
 		}, 1, () -> new ValidationJsonException(PARAMETER_URL, "fortify-login"));
+	}
+
+	private String getFortifyToken(final String url, final String authentication,
+			final FortifyCurlProcessor processor) {
+		// Authentication request
+		final List<CurlRequest> requests = new ArrayList<>();
+		requests.add(new CurlRequest(HttpMethod.POST, url + "/j_spring_security_check", authentication + "&hash=",
+				FortifyCurlProcessor.LOGIN_CALLBACK,
+				"Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"));
+
+		// used to obtain the Fortify token into the page's content.
+		final CurlRequest requestIndex = new CurlRequest(HttpMethod.GET,
+				StringUtils.appendIfMissing(url, "/") + "flex/index.jsp", "",
+				"Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+		requestIndex.setSaveResponse(true);
+
+		requests.add(requestIndex);
+		if (!processor.process(requests)) {
+			return null;
+		}
+
+		// try to obtain the fortify's token.
+		final String content = ObjectUtils.defaultIfNull(requestIndex.getResponse(), "");
+		final Pattern pattern = Pattern.compile("FortifyToken ([\\w]+)");
+		final Matcher matcher = pattern.matcher(content);
+		if (!matcher.find()) {
+			return null;
+		}
+		return matcher.group(1);
 	}
 
 	private FortifyCurlProcessor newFortifyCurlProcessor(final Map<String, String> parameters) {
