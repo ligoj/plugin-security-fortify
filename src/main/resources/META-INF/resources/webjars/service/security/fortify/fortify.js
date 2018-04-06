@@ -50,10 +50,7 @@ define(function () {
 			}
 
 			window.setTimeout(function () {
-				if (inProgress) {
-					current.pieAudits([parseFloat(audited, 10), 100 - parseFloat(audited, 10)], subscription, $td.find('.security-fortify-audit-progress'), ['#000000', '#FFFFFF'],['service:security:fortify:audit-pie-audited', 'service:security:fortify:audit-pie-not-audited']);
-				}
-				current.pieAudits([parseFloat(measures.TotalRemediationEffortLow, 10), parseFloat(measures.TotalRemediationEffortMedium, 10), parseFloat(measures.TotalRemediationEffortHigh, 10)], subscription, $td.find('.security-fortify-audit-effort'), ['#1666ad', '#bfca24', '#d02f2f'],['service:security:fortify:effort-pie-low', 'service:security:fortify:effort-pie-medium', 'service:security:fortify:effort-pie-high']);
+				current.pieAudits($td.find('.security-fortify-audit-effort'), [parseFloat(measures.TotalRemediationEffortLow, 10), parseFloat(measures.TotalRemediationEffortMedium, 10), parseFloat(measures.TotalRemediationEffortHigh, 10)], ['#3cad1a', '#ad821a', '#d02f2f'],['service:security:fortify:effort-pie-low', 'service:security:fortify:effort-pie-medium', 'service:security:fortify:effort-pie-high']);
 			}, 50);
 
 			return current.$super('generateCarousel')(subscription, [
@@ -63,48 +60,16 @@ define(function () {
 				['service:security:fortify:issues', current.$super('icon')('bug', 'service:security:fortify:issues') + Math.ceil(parseFloat((measures.Issues || '0'), 10))],
 				['service:security:fortify:audit', current.$super('icon')('stethoscope' + auditedClass,
 					Handlebars.compile(current.$messages['service:security:fortify:audit-help-' + auditedKey])([audited, measures.PercentCriticalPriorityIssuesAudited || 0]))
-					+ Handlebars.compile(current.$messages['service:security:fortify:audit-' + auditedKey])(audited)
-					+ (inProgress ? ' <span class="security-fortify-audit-progress pie"></span>' : '')
-					+ ' &nbsp; <i class="fas fa-wrench" data-toggle="tooltip" title="' + Handlebars.compile(current.$messages['service:security:fortify:effort-help'])(measures.TotalRemediationEffort) + '"></i> '
-					+ Handlebars.compile(current.$messages['service:security:fortify:effort'])(measures.TotalRemediationEffort)
+					+ '<span class="security-fortify-progress">' + Handlebars.compile(current.$messages['service:security:fortify:audit-' + auditedKey])(audited)
+					+ ' &nbsp; <i class="fas fa-wrench" data-toggle="tooltip" title="' + Handlebars.compile(current.$messages['service:security:fortify:effort-help'])(measures.TotalRemediationEffort) + '"></i></span>'
 					+ ' <span class="security-fortify-audit-effort pie"></span>']
 			], 1);
 		},
 
-		pieAudits: function (data, subscription, $spark, colors, messages) {
-			require(['sparkline'], function () {
-				current.setupSparkline(data, $spark, colors, messages, '20px');
-
-				// Zoom and auto update tooltips
-				$spark.on('mouseenter', function (e) {
-					if (!$spark.is('.zoomed')) {
-						$spark.addClass('zoomed');
-						current.setupSparkline(data, $spark, colors, messages, '128px');
-						window.setTimeout(function () {
-							$spark.addClass('zoomed2');
-							$spark.find('canvas').on('mouseleave', function (e2) {
-								$spark.removeClass('zoomed');
-								current.setupSparkline(data, $spark, colors, messages, '20px');
-								window.setTimeout(function () {
-									$spark.removeClass('zoomed2');
-								}, 50);
-							})
-						}, 50);
-					}
-				});
-			});
-		},
-
-		setupSparkline: function (data, $spark, colors, messages, size) {
-			$spark.find('canvas').remove();
-			$spark.sparkline(data, {
-				type: 'pie',
+		pieAudits: function ($spark, data, colors, messages) {
+			current.$super('sparklinePieZoom')($spark, data, {
 				sliceColors: colors,
-				width: size,
-				height: size,
-				fillColor: 'black',
-				borderWidth: size === "128px" ? 4 : 2,
-				borderColor: '#ffffff',
+				zoomSize: $spark.closest('.masonry-container').length && '64px',
 				tooltipFormatter: function (sparkline, options, fields) {
 					return Handlebars.compile(current.$messages[messages[fields.offset]])([current.$super('roundPercent')(fields.percent), fields.value, sparkline.total]);
 				}
