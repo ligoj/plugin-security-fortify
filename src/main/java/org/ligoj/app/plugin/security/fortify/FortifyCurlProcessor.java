@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import org.ligoj.app.resource.plugin.CurlProcessor;
 import org.ligoj.app.resource.plugin.CurlRequest;
-import org.ligoj.app.resource.plugin.HttpResponseCallback;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +13,6 @@ import lombok.Setter;
  */
 public class FortifyCurlProcessor extends CurlProcessor {
 
-	/**
-	 * Special callback for Fortify login check.
-	 */
-	public static final HttpResponseCallback LOGIN_CALLBACK = new FortifyLoginHttpResponseCallback();
-	
 	public FortifyCurlProcessor(Function<CurlRequest, Boolean> authenticate) {
 		super.replay = authenticate;
 	}
