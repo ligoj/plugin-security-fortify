@@ -51,6 +51,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 	private static final String API_PROJECT_VERSIONS = "api/v1/projectVersions/";
 	private static final String API_PROJECTS = "api/v1/projects/";
+	private static final String API_TOKEN = "api/v1/auth/token";
 
 	/**
 	 * Plug-in key.
@@ -96,6 +97,9 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	@Autowired
 	private CacheManager cacheManager;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	@Override
 	public String getKey() {
 		return KEY;
@@ -112,13 +116,11 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		final CurlRequest request = new CurlRequest("POST", url, "{}", "Accept: application/json");
 		request.setSaveResponse(true);
 		processor.process(request);
-		final String content = ObjectUtils.defaultIfNull(request.getResponse(), "{}");
-		final ObjectMapper mapper = new ObjectMapper();
-		final Map<String, ?> data = MapUtils
-				.emptyIfNull((Map<String, ?>) mapper.readValue(content, Map.class).get("data"));
-		final String version = (String) data.get("webappVersion");
 		processor.close();
-		return version;
+		final String content = ObjectUtils.defaultIfNull(request.getResponse(), "{}");
+		final Map<String, ?> data = MapUtils
+				.emptyIfNull((Map<String, ?>) objectMapper.readValue(content, Map.class).get("data"));
+		return (String) data.get("webappVersion");
 	}
 
 	@Override
@@ -156,15 +158,17 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 			final FortifyCurlProcessor processor) {
 		// Use the preempted authentication processor
 		processor.setFortifyToken(null);
-		final String content = processor.get(url + "/api/v1/auth/token", "Accept:application/json", AUTH.WWW_AUTH_RESP
-				+ ":Basic " + BASE64_CODEC.encodeToString((user + ':' + password).getBytes(StandardCharsets.UTF_8)));
-		if (content == null) {
+		final CurlRequest request = new CurlRequest("GET", StringUtils.appendIfMissing(url, "/") + API_TOKEN, null,
+				"Accept:application/json", AUTH.WWW_AUTH_RESP + ":Basic "
+						+ BASE64_CODEC.encodeToString((user + ':' + password).getBytes(StandardCharsets.UTF_8)));
+		request.setSaveResponse(true);
+		if (!processor.process(request)) {
 			return null;
 		}
 
 		// Get the token.
 		final Pattern pattern = Pattern.compile("\"token\"\\s*:\\s*\"([^\"]+)\"");
-		final Matcher matcher = pattern.matcher(content);
+		final Matcher matcher = pattern.matcher(request.getResponse());
 		if (!matcher.find()) {
 			// Something goes wrong
 			return null;
@@ -332,8 +336,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 		// Parse the JSON response
 		final String content = ObjectUtils.defaultIfNull(request.getResponse(), "{}");
-		final ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(content, Map.class).get("data");
+		return objectMapper.readValue(content, Map.class).get("data");
 	}
 
 	/**
