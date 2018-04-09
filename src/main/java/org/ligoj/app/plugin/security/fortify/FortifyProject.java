@@ -16,6 +16,11 @@ import lombok.Setter;
 public class FortifyProject extends NamedBean<Integer> {
 
 	/**
+	 * SID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * Original fortify measures.
 	 */
 	private Map<String, String> measures = new HashMap<>();
