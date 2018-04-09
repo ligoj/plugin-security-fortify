@@ -81,7 +81,7 @@ define(function () {
 		 */
 		renderDetailsFeatures: function (subscription) {
 			var measures = subscription.data.project.measures;
-			var rating = measures && measures.FortifySecurityRating || 0;
+			var rating = Math.ceil(Number.parseFloat(measures && measures.FortifySecurityRating || '0'));
 			var color = rating && ['default', 'danger', 'warning', 'warning', 'primary', 'success'][rating];
 			return color ? '<span data-toggle="tooltip" title="' + current.$messages['service:security:fortify:rating'] + '" class="label label-' + color + '">' + rating + '</span>' : '';
 		},
