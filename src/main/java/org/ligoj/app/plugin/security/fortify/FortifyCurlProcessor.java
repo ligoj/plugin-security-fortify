@@ -1,3 +1,6 @@
+/*
+ * Licensed under MIT (https://github.com/ligoj/ligoj/blob/master/LICENSE)
+ */
 package org.ligoj.app.plugin.security.fortify;
 
 import java.util.function.Function;
