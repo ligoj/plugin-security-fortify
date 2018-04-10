@@ -30,7 +30,7 @@ public class FortifyCurlProcessor extends CurlProcessor {
 	@Override
 	protected boolean process(final CurlRequest request) {
 		if (fortifyToken != null) {
-			request.getHeaders().put("Authorization", "FortifyToken " + this.fortifyToken);
+			request.getHeaders().put("Authorization", "FortifyToken " + getFortifyToken());
 		}
 		return super.process(request);
 	}

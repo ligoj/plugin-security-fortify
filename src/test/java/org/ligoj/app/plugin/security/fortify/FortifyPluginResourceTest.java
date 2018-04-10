@@ -41,6 +41,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
+
 /**
  * Test class of {@link FortifyPluginResource}
  */
@@ -284,16 +286,18 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 						StandardCharsets.UTF_8))));
 
 		// First attempt failed
-		httpServer.stubFor(post(urlPathEqualTo("/api/v1/userSession/info")).inScenario("replay").willReturn(aResponse()
-				.withStatus(HttpStatus.SC_UNAUTHORIZED)).willSetStateTo("second-attempt"));
+		httpServer.stubFor(post(urlPathEqualTo("/api/v1/userSession/info")).inScenario("replay")
+				.whenScenarioStateIs(Scenario.STARTED).willReturn(aResponse().withStatus(HttpStatus.SC_UNAUTHORIZED))
+				.willSetStateTo("second-attempt"));
 
 		// Second attempt failed
-		httpServer.stubFor(post(urlPathEqualTo("/api/v1/userSession/info")).inScenario("replay").willReturn(aResponse()
-				.withStatus(HttpStatus.SC_OK)
-				.withBody(IOUtils.toString(
+		httpServer.stubFor(post(urlPathEqualTo("/api/v1/userSession/info")).inScenario("replay")
+				.whenScenarioStateIs("second-attempt")
+				.willReturn(aResponse().withStatus(HttpStatus.SC_OK).withBody(IOUtils.toString(
 						new ClassPathResource("mock-server/fortify/fortify-api-userSession-info.json").getInputStream(),
-						StandardCharsets.UTF_8))).willSetStateTo("second-attempt"));
-		
+						StandardCharsets.UTF_8)))
+				.willSetStateTo("second-attempt"));
+
 		httpServer.start();
 		Assertions.assertTrue(resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription)));
 	}

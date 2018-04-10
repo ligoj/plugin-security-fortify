@@ -112,9 +112,6 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	@Override
 	public String getVersion(final Map<String, String> parameters) throws Exception {
 		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
-		// Check the user can log-in to Fortify
-		authenticate(parameters, processor, false);
-
 		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + "api/v1/userSession/info";
 		final CurlRequest request = new CurlRequest("POST", url, "{}", "Accept: application/json");
 		request.setSaveResponse(true);
@@ -180,20 +177,24 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	private FortifyCurlProcessor newFortifyCurlProcessor(final Map<String, String> parameters) {
-		return new FortifyCurlProcessor(r -> {
+		FortifyCurlProcessor processor = new FortifyCurlProcessor(r -> {
 			if (r.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
 				// Authorization failed, expired token, retry once
 				authenticate(parameters, (FortifyCurlProcessor) r.getProcessor(), true);
+				return true;
 			}
 			return false;
 		});
+		// Check the user can log-in to Fortify
+		authenticate(parameters, processor, false);
+		return processor;
 	}
 
 	/**
 	 * Validate the project configuration.
 	 * 
 	 * @param parameters
-	 *            the project parameters.
+	 *            The project parameters.
 	 * @return true if the project exists.
 	 */
 	protected FortifyProject validateProject(final Map<String, String> parameters) throws IOException {
@@ -313,12 +314,10 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	private Collection<Map<String, Object>> getFortifyResource(final Map<String, String> parameters,
 			final String resource) throws IOException {
 		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
-		try {
-			return CollectionUtils
-					.emptyIfNull((List<Map<String, Object>>) getFortifyResource(parameters, resource, processor));
-		} finally {
-			processor.close();
-		}
+		Collection<Map<String, Object>> result = CollectionUtils
+				.emptyIfNull((List<Map<String, Object>>) getFortifyResource(parameters, resource, processor));
+		processor.close();
+		return result;
 	}
 
 	/**
@@ -326,12 +325,6 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 */
 	private Object getFortifyResource(final Map<String, String> parameters, final String resource,
 			final FortifyCurlProcessor processor) throws IOException {
-
-		// Authenticate is required for the first time
-		if (processor.getFortifyToken() == null) {
-			authenticate(parameters, processor, false);
-		}
-
 		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + resource;
 		final CurlRequest request = new CurlRequest("GET", url, null, "Accept: application/json");
 		request.setSaveResponse(true);
@@ -354,6 +347,11 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 	/**
 	 * Prepare an authenticated connection to Fortify
+	 * 
+	 * @param parameters
+	 *            The subscription parameters.
+	 * @param processor
+	 *            The related processor where the fortify token will be attached to.
 	 */
 	protected void authenticate(final Map<String, String> parameters, final FortifyCurlProcessor processor,
 			final boolean force) {
