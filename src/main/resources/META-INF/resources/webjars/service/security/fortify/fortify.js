@@ -32,12 +32,10 @@ define(function () {
 			var measures = subscription.data.project.measures;
 			var audited = parseFloat(measures.PercentAudited || 0, 10);
 			var auditedClass = '';
-			var inProgress = true;
 			var auditedKey = 'in-progress';
 			if (audited === 100) {
 				auditedClass = ' text-success';
 				auditedKey = 'complete';
-				inProgress = false;
 			} else if (audited >= 90) {
 				auditedClass = ' faa-flash animated text-primary';
 			} else if (audited >= 80) {
@@ -46,7 +44,6 @@ define(function () {
 				// Audit in progress
 				auditedClass = ' text-danger';
 				auditedKey = 'new';
-				inProgress = false;
 			}
 
 			window.setTimeout(function () {

@@ -149,9 +149,9 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 			cacheManager.getCache("curl-tokens").put(cacheToken, token);
 			return token;
 		}
-		return curlCacheToken.getTokenCache(FortifyProject.class, cacheToken, k -> {
-			return getFortifyToken(url, user, password, processor);
-		}, 1, () -> new ValidationJsonException(PARAMETER_URL, "fortify-login"));
+		return curlCacheToken.getTokenCache(FortifyProject.class, cacheToken,
+				k -> getFortifyToken(url, user, password, processor), 1,
+				() -> new ValidationJsonException(PARAMETER_URL, "fortify-login"));
 	}
 
 	private String getFortifyToken(final String url, final String user, final String password,
