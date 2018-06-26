@@ -5,8 +5,8 @@ package org.ligoj.app.plugin.security.fortify;
 
 import java.util.function.Function;
 
-import org.ligoj.app.resource.plugin.CurlProcessor;
-import org.ligoj.app.resource.plugin.CurlRequest;
+import org.ligoj.bootstrap.core.curl.CurlProcessor;
+import org.ligoj.bootstrap.core.curl.CurlRequest;
 
 import lombok.Getter;
 import lombok.Setter;
