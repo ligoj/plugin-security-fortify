@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/ligoj/plugin-security-fortify.svg?branch=master)](https://travis-ci.org/ligoj/plugin-security-fortify)
 [![Build Status](https://circleci.com/gh/ligoj/plugin-security-fortify.svg?style=svg)](https://circleci.com/gh/ligoj/plugin-security-fortify)
-[![Build Status](https://codeship.com/projects/a8c64bc0-05c9-0135-5add-32bab775782c/status?branch=master)](https://codeship.com/projects/213622)
 [![Build Status](https://semaphoreci.com/api/v1/ligoj/plugin-security-fortify/branches/master/shields_badge.svg)](https://semaphoreci.com/ligoj/plugin-security-fortify)
 [![Build Status](https://ci.appveyor.com/api/projects/status/5926fmf0p5qp9j16/branch/master?svg=true)](https://ci.appveyor.com/project/ligoj/plugin-security-fortify/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/ligoj/plugin-security-fortify/badge.svg?branch=master)](https://coveralls.io/github/ligoj/plugin-security-fortify?branch=master)
