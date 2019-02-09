@@ -15,7 +15,6 @@ import lombok.Setter;
  * Fortify project.
  */
 @Getter
-@Setter
 public class FortifyProject extends NamedBean<Integer> {
 
 	/**
@@ -31,5 +30,6 @@ public class FortifyProject extends NamedBean<Integer> {
 	/**
 	 * Project version name
 	 */
+	@Setter
 	private String version;
 }

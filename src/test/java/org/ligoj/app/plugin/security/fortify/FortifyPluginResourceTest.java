@@ -348,7 +348,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 
 	private void assertProject(final FortifyProject project) {
 		Assertions.assertEquals(2, project.getId().intValue());
-		Assertions.assertEquals("gfi-saas", project.getName());
+		Assertions.assertEquals("ligoj-saas", project.getName());
 		Assertions.assertEquals("1.0", project.getVersion());
 
 		Assertions.assertEquals("1160.0", project.getMeasures().get("TotalRemediationEffort"));
