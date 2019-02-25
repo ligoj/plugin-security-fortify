@@ -56,6 +56,8 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	private static final String API_PROJECTS = "api/v1/projects/";
 	private static final String API_TOKEN = "api/v1/auth/token";
 
+	private static final Base64 BASE64_CODEC = new Base64(0);
+
 	/**
 	 * Plug-in key.
 	 */
@@ -135,10 +137,20 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		return nodeStatusWithData;
 	}
 
-	private static final Base64 BASE64_CODEC = new Base64(0);
-
 	/**
 	 * Cache the API token.
+	 *
+	 * @param url
+	 *            Fortify URL.
+	 * @param user
+	 *            Access user.
+	 * @param password
+	 *            Access password.
+	 * @param processor
+	 *            The related processor where the fortify token will be attached to.
+	 * @param force
+	 *            When <code>true</code>, the token will be regenerated.
+	 *
 	 */
 	protected String authenticate(final String url, final String user, final String password,
 			final FortifyCurlProcessor processor, final boolean force) {
@@ -152,6 +164,21 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		return curlCacheToken.getTokenCache(FortifyProject.class, cacheToken,
 				k -> getFortifyToken(url, user, password, processor), 1,
 				() -> new ValidationJsonException(PARAMETER_URL, "fortify-login"));
+	}
+
+	/**
+	 * Prepare an authenticated connection to Fortify
+	 *
+	 * @param parameters
+	 *            The subscription parameters.
+	 * @param processor
+	 *            The related processor where the fortify token will be attached to.
+	 */
+	protected void authenticate(final Map<String, String> parameters, final FortifyCurlProcessor processor,
+			final boolean force) {
+		// Compute the fortify token and store it in the processor
+		processor.setFortifyToken(authenticate(parameters.get(PARAMETER_URL), parameters.get(PARAMETER_USER),
+				StringUtils.trimToEmpty(parameters.get(PARAMETER_PASSWORD)), processor, force));
 	}
 
 	private String getFortifyToken(final String url, final String user, final String password,
@@ -192,7 +219,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 	/**
 	 * Validate the project configuration.
-	 * 
+	 *
 	 * @param parameters
 	 *            The project parameters.
 	 * @return true if the project exists.
@@ -242,7 +269,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 	/**
 	 * Find the spaces matching to the given criteria.Look into space key, and space name.
-	 * 
+	 *
 	 * @param criteria
 	 *            the search criteria.
 	 * @param node
@@ -260,7 +287,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 	/**
 	 * Find all the versions of a project.
-	 * 
+	 *
 	 * @param node
 	 *            the node to be tested with given parameters.
 	 * @param project
@@ -281,7 +308,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	/**
 	 * Call a Fortify REST service to fetch items by their name.<br>
 	 * NOTE : process manager will be shut down.
-	 * 
+	 *
 	 * @param node
 	 *            node to query.
 	 * @param url
@@ -343,21 +370,6 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		space.setId((Integer) spaceRaw.get("id"));
 		space.setName((String) spaceRaw.get("name"));
 		return space;
-	}
-
-	/**
-	 * Prepare an authenticated connection to Fortify
-	 * 
-	 * @param parameters
-	 *            The subscription parameters.
-	 * @param processor
-	 *            The related processor where the fortify token will be attached to.
-	 */
-	protected void authenticate(final Map<String, String> parameters, final FortifyCurlProcessor processor,
-			final boolean force) {
-		// Compute the fortify token and store it in the processor
-		processor.setFortifyToken(authenticate(parameters.get(PARAMETER_URL), parameters.get(PARAMETER_USER),
-				StringUtils.trimToEmpty(parameters.get(PARAMETER_PASSWORD)), processor, force));
 	}
 
 }
