@@ -16,7 +16,12 @@ import lombok.Setter;
  */
 public class FortifyCurlProcessor extends CurlProcessor {
 
-	public FortifyCurlProcessor(Function<CurlRequest, Boolean> authenticate) {
+	/**
+	 * Initialization of replay.
+	 * 
+	 * @param authenticate Authenticate function.
+	 */
+	public FortifyCurlProcessor(final Function<CurlRequest, Boolean> authenticate) {
 		super.replay = authenticate;
 	}
 

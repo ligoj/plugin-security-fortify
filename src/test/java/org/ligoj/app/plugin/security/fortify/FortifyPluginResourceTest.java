@@ -50,7 +50,7 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario;
 @ContextConfiguration(locations = "classpath:/META-INF/spring/application-context-test.xml")
 @Rollback
 @Transactional
-public class FortifyPluginResourceTest extends AbstractServerTest {
+class FortifyPluginResourceTest extends AbstractServerTest {
 	@Autowired
 	private FortifyPluginResource resource;
 
@@ -63,7 +63,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	protected int subscription;
 
 	@BeforeEach
-	public void prepareData() throws IOException {
+	void prepareData() throws IOException {
 		// Only with Spring context
 		persistEntities("csv",
 				new Class[] { Node.class, Parameter.class, Project.class, Subscription.class, ParameterValue.class },
@@ -80,17 +80,17 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	/**
 	 * Return the subscription identifier of the given project. Assumes there is only one subscription for a service.
 	 */
-	protected int getSubscription(final String project) {
+	private int getSubscription(final String project) {
 		return getSubscription(project, SecurityResource.SERVICE_KEY);
 	}
 
 	@Test
-	public void delete() throws Exception {
+	void delete() throws Exception {
 		resource.delete(subscription, false);
 	}
 
 	@Test
-	public void getVersion() throws Exception {
+	void getVersion() throws Exception {
 		prepareMockHome();
 		prepareMockVersion();
 		httpServer.start();
@@ -100,7 +100,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void getVersionFailed() {
+	void getVersionFailed() {
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
 			resource.getVersion(subscription);
@@ -108,13 +108,13 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void getLastVersion() throws Exception {
+	void getLastVersion() throws Exception {
 		final String lastVersion = resource.getLastVersion();
 		Assertions.assertNull(lastVersion);
 	}
 
 	@Test
-	public void link() throws Exception {
+	void link() throws Exception {
 		prepareMockHome();
 		prepareMockProjectVersions();
 
@@ -126,7 +126,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void validateProjectNotFound() throws Exception {
+	void validateProjectNotFound() throws Exception {
 		prepareMockProjectVersions();
 
 		final Map<String, String> parameters = pvResource.getNodeParameters("service:security:fortify:dig");
@@ -142,7 +142,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void validateProject() throws Exception {
+	void validateProject() throws Exception {
 		prepareMockProjectVersions();
 
 		final Map<String, String> parameters = pvResource.getNodeParameters("service:security:fortify:dig");
@@ -153,7 +153,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusSubscriptionStatus() throws Exception {
+	void checkStatusSubscriptionStatus() throws Exception {
 		prepareMockProjectVersions();
 		Assertions.assertTrue(resource.checkSubscriptionStatus(subscriptionResource.getParametersNoCheck(subscription))
 				.getStatus().isUp());
@@ -163,7 +163,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	 * Project is not found
 	 */
 	@Test
-	public void checkStatusSubscriptionStatusProjectNotFound() throws Exception {
+	void checkStatusSubscriptionStatusProjectNotFound() throws Exception {
 		prepareMockHome();
 
 		// Find project return an empty list
@@ -179,7 +179,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	 * Version is not found
 	 */
 	@Test
-	public void checkStatusSubscriptionStatusVersionNotFound() throws Exception {
+	void checkStatusSubscriptionStatusVersionNotFound() throws Exception {
 		prepareMockHome();
 		httpServer.stubFor(get(urlPathEqualTo("/api/v1/projects/2")).willReturn(aResponse().withStatus(HttpStatus.SC_OK)
 				.withBody(IOUtils.toString(
@@ -197,7 +197,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusSubscriptionStatusException() {
+	void checkStatusSubscriptionStatusException() {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
@@ -237,7 +237,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatus() throws Exception {
+	void checkStatus() throws Exception {
 		prepareMockProjects();
 		prepareMockVersion();
 		httpServer.start();
@@ -245,7 +245,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNoConnection() {
+	void checkStatusNoConnection() {
 		httpServer.start();
 		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
 			resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription));
@@ -253,7 +253,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNoTokenContent() {
+	void checkStatusNoTokenContent() {
 		httpServer.stubFor(get(urlPathEqualTo("/api/v1/auth/token"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_OK).withBody("any")));
 		httpServer.start();
@@ -279,7 +279,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusReplaySucceed() throws Exception {
+	void checkStatusReplaySucceed() throws Exception {
 		httpServer.stubFor(get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_OK)
 				.withBody(IOUtils.toString(
 						new ClassPathResource("mock-server/fortify/fortify-auth-token.json").getInputStream(),
@@ -303,7 +303,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusReplayFailed() throws Exception {
+	void checkStatusReplayFailed() throws Exception {
 		httpServer.stubFor(get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_OK)
 				.withBody(IOUtils.toString(
 						new ClassPathResource("mock-server/fortify/fortify-auth-token.json").getInputStream(),
@@ -317,7 +317,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void checkStatusNotAccess() {
+	void checkStatusNotAccess() {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
@@ -327,7 +327,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void findAllByName() throws Exception {
+	void findAllByName() throws Exception {
 		prepareMockProjects();
 
 		final List<FortifyProject> projects = resource.findAllByName("service:security:fortify:dig", "nosvent");
@@ -336,7 +336,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void findProjectVersions() throws Exception {
+	void findProjectVersions() throws Exception {
 		prepareMockProjectVersions();
 
 		final Collection<FortifyProject> versions = resource.findProjectVersions("service:security:fortify:dig", "2",
@@ -357,7 +357,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void findAllByNameInvalidConnection() {
+	void findAllByNameInvalidConnection() {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
@@ -367,7 +367,7 @@ public class FortifyPluginResourceTest extends AbstractServerTest {
 	}
 
 	@Test
-	public void findAllByNameInvalidUrl() {
+	void findAllByNameInvalidUrl() {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();

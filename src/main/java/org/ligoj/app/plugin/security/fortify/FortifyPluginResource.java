@@ -140,16 +140,13 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	/**
 	 * Cache the API token.
 	 *
-	 * @param url
-	 *            Fortify URL.
-	 * @param user
-	 *            Access user.
-	 * @param password
-	 *            Access password.
-	 * @param processor
-	 *            The related processor where the fortify token will be attached to.
-	 * @param force
-	 *            When <code>true</code>, the token will be regenerated.
+	 * @param url       Fortify URL.
+	 * @param user      Access user.
+	 * @param password  Access password.
+	 * @param processor The related processor where the fortify token will be
+	 *                  attached to.
+	 * @param force     When <code>true</code>, the token will be regenerated.
+	 * @return The security token.
 	 *
 	 */
 	protected String authenticate(final String url, final String user, final String password,
@@ -169,10 +166,10 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	/**
 	 * Prepare an authenticated connection to Fortify
 	 *
-	 * @param parameters
-	 *            The subscription parameters.
-	 * @param processor
-	 *            The related processor where the fortify token will be attached to.
+	 * @param parameters The subscription parameters.
+	 * @param processor  The related processor where the fortify token will be
+	 *                   attached to.
+	 * @param force      When <code>true</code>, the cache is ignored.
 	 */
 	protected void authenticate(final Map<String, String> parameters, final FortifyCurlProcessor processor,
 			final boolean force) {
@@ -220,9 +217,9 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	/**
 	 * Validate the project configuration.
 	 *
-	 * @param parameters
-	 *            The project parameters.
+	 * @param parameters The project parameters.
 	 * @return true if the project exists.
+	 * @throws IOException When Fortify JSON content cannot be parsed.
 	 */
 	protected FortifyProject validateProject(final Map<String, String> parameters) throws IOException {
 		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
@@ -268,13 +265,13 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	/**
-	 * Find the spaces matching to the given criteria.Look into space key, and space name.
+	 * Find the spaces matching to the given criteria.Look into space key, and space
+	 * name.
 	 *
-	 * @param criteria
-	 *            the search criteria.
-	 * @param node
-	 *            the node to be tested with given parameters.
+	 * @param criteria the search criteria.
+	 * @param node     the node to be tested with given parameters.
 	 * @return project name.
+	 * @throws IOException When Fortify JSON content cannot be parsed.
 	 */
 	@GET
 	@Path("{node}/{criteria}")
@@ -288,13 +285,11 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	/**
 	 * Find all the versions of a project.
 	 *
-	 * @param node
-	 *            the node to be tested with given parameters.
-	 * @param project
-	 *            the project identifier
-	 * @param criteria
-	 *            the search criteria.
+	 * @param node     the node to be tested with given parameters.
+	 * @param project  the project identifier
+	 * @param criteria the search criteria.
 	 * @return project name.
+	 * @throws IOException When Fortify JSON content cannot be parsed.
 	 */
 	@GET
 	@Path("versions/{node}/{project}")
@@ -309,12 +304,9 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 * Call a Fortify REST service to fetch items by their name.<br>
 	 * NOTE : process manager will be shut down.
 	 *
-	 * @param node
-	 *            node to query.
-	 * @param url
-	 *            query URL.
-	 * @param criteria
-	 *            Optional name to match.
+	 * @param node     node to query.
+	 * @param url      query URL.
+	 * @param criteria Optional name to match.
 	 * @return Projects matching to the given criteria.
 	 */
 	private Collection<FortifyProject> findAll(final String node, final String url, final String criteria)
@@ -334,8 +326,8 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	/**
-	 * Create an authenticated request and return the data. The created processor is entirely managed : opened and
-	 * closed.
+	 * Create an authenticated request and return the data. The created processor is
+	 * entirely managed : opened and closed.
 	 */
 	@SuppressWarnings("unchecked")
 	private Collection<Map<String, Object>> getFortifyResource(final Map<String, String> parameters,
