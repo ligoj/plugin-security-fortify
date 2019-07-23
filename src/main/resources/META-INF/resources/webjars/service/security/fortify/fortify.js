@@ -22,7 +22,7 @@ define(function () {
 		renderFeatures: function (subscription) {
 			// Add Project group link
 			var url = subscription.parameters['service:security:fortify:url'] + '/flex/index.jsp' + (subscription.parameters['service:security:fortify:version'] ? '#projectVersionId=' + subscription.parameters['service:security:fortify:version'] : '');
-			var result = current.$super('renderServicelink')('home', url, 'service:security', null, ' target="_blank"');
+			var result = current.$super('renderServiceLink')('home', url, 'service:security', null, ' target="_blank"');
 			// Help
 			result += current.$super('renderServiceHelpLink')(subscription.parameters, 'service:security:help');
 			return result;
