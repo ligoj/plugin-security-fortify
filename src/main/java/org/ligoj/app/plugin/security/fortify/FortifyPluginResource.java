@@ -13,12 +13,12 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -26,8 +26,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
-import org.apache.http.auth.AUTH;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpStatus;
 import org.ligoj.app.api.SubscriptionStatusWithData;
 import org.ligoj.app.plugin.security.SecurityResource;
 import org.ligoj.app.plugin.security.SecurityServicePlugin;
@@ -183,7 +183,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		// Use the preempted authentication processor
 		processor.setFortifyToken(null);
 		final CurlRequest request = new CurlRequest("GET", StringUtils.appendIfMissing(url, "/") + API_TOKEN, null,
-				"Accept:application/json", AUTH.WWW_AUTH_RESP + ":Basic "
+				"Accept:application/json", HttpHeaders.AUTHORIZATION + ":Basic "
 						+ BASE64_CODEC.encodeToString((user + ':' + password).getBytes(StandardCharsets.UTF_8)));
 		request.setSaveResponse(true);
 		if (!processor.process(request)) {

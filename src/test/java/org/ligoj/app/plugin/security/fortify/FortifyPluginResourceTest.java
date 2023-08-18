@@ -14,11 +14,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		persistEntities("csv",
 				new Class[] { Node.class, Parameter.class, Project.class, Subscription.class, ParameterValue.class },
 				StandardCharsets.UTF_8.name());
-		this.subscription = getSubscription("gStack");
+		this.subscription = getSubscription("Jupiter");
 
 		// Coverage only
 		resource.getKey();
