@@ -66,8 +66,8 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 	void prepareData() throws IOException {
 		// Only with Spring context
 		persistEntities("csv",
-				new Class[] { Node.class, Parameter.class, Project.class, Subscription.class, ParameterValue.class },
-				StandardCharsets.UTF_8.name());
+				new Class<?>[] { Node.class, Parameter.class, Project.class, Subscription.class, ParameterValue.class },
+				StandardCharsets.UTF_8);
 		this.subscription = getSubscription("Jupiter");
 
 		// Coverage only
@@ -102,9 +102,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 	@Test
 	void getVersionFailed() {
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.getVersion(subscription);
-		}), FortifyPluginResource.PARAMETER_URL, "fortify-login");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.getVersion(subscription)), FortifyPluginResource.PARAMETER_URL, "fortify-login");
 	}
 
 	@Test
@@ -136,9 +134,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 																		// with
 																		// this
 																		// identifier
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.validateProject(parameters);
-		}), FortifyPluginResource.PARAMETER_VERSION, "fortify-version");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.validateProject(parameters)), FortifyPluginResource.PARAMETER_VERSION, "fortify-version");
 	}
 
 	@Test
@@ -170,9 +166,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		httpServer.stubFor(get(urlPathEqualTo("/api/v1/projects/2"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_OK).withBody("{}")));
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.checkSubscriptionStatus(subscriptionResource.getParametersNoCheck(subscription));
-		}), FortifyPluginResource.PARAMETER_KEY, "fortify-project");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.checkSubscriptionStatus(subscriptionResource.getParametersNoCheck(subscription))), FortifyPluginResource.PARAMETER_KEY, "fortify-project");
 	}
 
 	/**
@@ -190,9 +184,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		httpServer.stubFor(get(urlPathEqualTo("/api/v1/projects/2/versions"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_OK).withBody("{\"data\":[]}")));
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.checkSubscriptionStatus(subscriptionResource.getParametersNoCheck(subscription));
-		}), FortifyPluginResource.PARAMETER_VERSION, "fortify-version");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.checkSubscriptionStatus(subscriptionResource.getParametersNoCheck(subscription))), FortifyPluginResource.PARAMETER_VERSION, "fortify-version");
 
 	}
 
@@ -201,9 +193,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription));
-		}), FortifyPluginResource.PARAMETER_URL, "fortify-login");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription))), FortifyPluginResource.PARAMETER_URL, "fortify-login");
 	}
 
 	private void prepareMockProjects() throws IOException {
@@ -247,9 +237,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 	@Test
 	void checkStatusNoConnection() {
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription));
-		}), FortifyPluginResource.PARAMETER_URL, "fortify-login");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription))), FortifyPluginResource.PARAMETER_URL, "fortify-login");
 	}
 
 	@Test
@@ -257,9 +245,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		httpServer.stubFor(get(urlPathEqualTo("/api/v1/auth/token"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_OK).withBody("any")));
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			Assertions.assertFalse(resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription)));
-		}), FortifyPluginResource.PARAMETER_URL, "fortify-login");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> Assertions.assertFalse(resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription)))), FortifyPluginResource.PARAMETER_URL, "fortify-login");
 	}
 
 	private void prepareMockVersion() throws IOException {
@@ -321,9 +307,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription));
-		}), FortifyPluginResource.PARAMETER_URL, "fortify-login");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.checkStatus(subscriptionResource.getParametersNoCheck(subscription))), FortifyPluginResource.PARAMETER_URL, "fortify-login");
 	}
 
 	@Test
@@ -332,7 +316,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 
 		final List<FortifyProject> projects = resource.findAllByName("service:security:fortify:dig", "nosvent");
 		Assertions.assertEquals(1, projects.size());
-		checkProject(projects.get(0));
+		checkProject(projects.getFirst());
 	}
 
 	@Test
@@ -361,9 +345,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.findAllByName("service:security:fortify:dig", "nosvent");
-		}), FortifyPluginResource.PARAMETER_URL, "fortify-login");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.findAllByName("service:security:fortify:dig", "nosvent")), FortifyPluginResource.PARAMETER_URL, "fortify-login");
 	}
 
 	@Test
@@ -371,9 +353,7 @@ class FortifyPluginResourceTest extends AbstractServerTest {
 		httpServer.stubFor(
 				get(urlPathEqualTo("/api/v1/auth/token")).willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 		httpServer.start();
-		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> {
-			resource.findAllByName("service:security:fortify:dig", "nosvent");
-		}), FortifyPluginResource.PARAMETER_URL, "fortify-login");
+		MatcherUtil.assertThrows(Assertions.assertThrows(ValidationJsonException.class, () -> resource.findAllByName("service:security:fortify:dig", "nosvent")), FortifyPluginResource.PARAMETER_URL, "fortify-login");
 	}
 
 	private void checkProject(final INamableBean<Integer> space) {
