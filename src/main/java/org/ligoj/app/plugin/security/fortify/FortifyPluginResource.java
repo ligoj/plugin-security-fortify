@@ -209,7 +209,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 			}
 			return false;
 		});
-		// Check the user can log-in to Fortify
+		// Check the user can login to Fortify
 		authenticate(parameters, processor, false);
 		return processor;
 	}
@@ -218,7 +218,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 * Validate the project configuration.
 	 *
 	 * @param parameters The project parameters.
-	 * @return true if the project exists.
+	 * @return <code>true</code> if the project exists.
 	 * @throws IOException When Fortify JSON content cannot be parsed.
 	 */
 	protected FortifyProject validateProject(final Map<String, String> parameters) throws IOException {
@@ -311,7 +311,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 */
 	private Collection<FortifyProject> findAll(final String node, final String url, final String criteria)
 			throws IOException {
-		// Check the user can log-in to Fortify
+		// Check the user can log in to Fortify
 		final Collection<Map<String, Object>> data = getFortifyResource(this.pvResource.getNodeParameters(node), url);
 		final Format format = new NormalizeFormat();
 		final String formatCriteria = format.format(StringUtils.trimToEmpty(criteria));

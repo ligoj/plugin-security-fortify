@@ -10,7 +10,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/ligoj/plugin-security-fortify/badge)](https://www.codefactor.io/repository/github/ligoj/plugin-security-fortify)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://fabdouglas.mit-license.org/)
 
-[Ligoj](https://github.com/ligoj/ligoj) Fortify securityg plugin, and extending [Security plugin](https://github.com/ligoj/plugin-security)
+[Ligoj](https://github.com/ligoj/ligoj) Fortify security plugin, and extending [Security plugin](https://github.com/ligoj/plugin-security)
 Provides the following features :
 - Display the "Fortify Security Rating"
 - Display the issues and density
