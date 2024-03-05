@@ -1,7 +1,6 @@
 # :link: Ligoj HP Fortify plugin [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.ligoj.plugin/plugin-security-fortify/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.ligoj.plugin/plugin-security-fortify)
 
 [![Build Status](https://travis-ci.org/ligoj/plugin-security-fortify.svg?branch=master)](https://travis-ci.org/ligoj/plugin-security-fortify)
-[![Build Status](https://ci.appveyor.com/api/projects/status/5926fmf0p5qp9j16/branch/master?svg=true)](https://ci.appveyor.com/project/ligoj/plugin-security-fortify/branch/master)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.ligoj.plugin%3Aplugin-security-fortify&metric=coverage)](https://sonarcloud.io/dashboard?id=org.ligoj.plugin%3Aplugin-security-fortify)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?metric=alert_status&project=org.ligoj.plugin:plugin-security-fortify)](https://sonarcloud.io/dashboard/index/org.ligoj.plugin:plugin-security-fortify)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7972cb9a10d54d119b8c434fef8d4013)](https://www.codacy.com/gh/ligoj/plugin-security-fortify?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ligoj/plugin-security-fortify&amp;utm_campaign=Badge_Grade)
