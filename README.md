@@ -1,4 +1,4 @@
-# :link: Ligoj HP Fortify plugin [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.ligoj.plugin/plugin-security-fortify/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.ligoj.plugin/plugin-security-fortify) [![Download](https://api.bintray.com/packages/ligoj/maven-repo/plugin-security-fortify/images/download.svg) ](https://bintray.com/ligoj/maven-repo/plugin-security-fortify/_latestVersion)
+# :link: Ligoj HP Fortify plugin [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.ligoj.plugin/plugin-security-fortify/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.ligoj.plugin/plugin-security-fortify)
 
 [![Build Status](https://travis-ci.org/ligoj/plugin-security-fortify.svg?branch=master)](https://travis-ci.org/ligoj/plugin-security-fortify)
 [![Build Status](https://circleci.com/gh/ligoj/plugin-security-fortify.svg?style=svg)](https://circleci.com/gh/ligoj/plugin-security-fortify)
