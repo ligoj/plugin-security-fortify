@@ -25,7 +25,7 @@ public class FortifyProject extends NamedBean<Integer> {
 	/**
 	 * Original fortify measures.
 	 */
-	private Map<String, String> measures = new HashMap<>();
+	private final Map<String, String> measures = new HashMap<>();
 
 	/**
 	 * Project version name

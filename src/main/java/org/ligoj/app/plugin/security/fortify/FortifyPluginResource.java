@@ -209,7 +209,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 			}
 			return false;
 		});
-		// Check the user can login to Fortify
+		// Check the user can log-in to Fortify
 		authenticate(parameters, processor, false);
 		return processor;
 	}
