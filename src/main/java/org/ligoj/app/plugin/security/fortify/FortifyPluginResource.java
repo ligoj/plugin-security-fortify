@@ -3,29 +3,16 @@
  */
 package org.ligoj.app.plugin.security.fortify;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.text.Format;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpStatus;
 import org.ligoj.app.api.SubscriptionStatusWithData;
@@ -42,7 +29,15 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.text.Format;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Sonar resource.
@@ -114,12 +109,12 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	@Override
 	public String getVersion(final Map<String, String> parameters) throws Exception {
 		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
-		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + "api/v1/userSession/info";
+		final String url = Strings.CS.appendIfMissing(parameters.get(PARAMETER_URL), "/") + "api/v1/userSession/info";
 		final CurlRequest request = new CurlRequest("POST", url, "{}", "Accept: application/json");
 		request.setSaveResponse(true);
 		processor.process(request);
 		processor.close();
-		final String content = ObjectUtils.defaultIfNull(request.getResponse(), "{}");
+		final String content = ObjectUtils.getIfNull(request.getResponse(), "{}");
 		final Map<String, ?> data = MapUtils
 				.emptyIfNull((Map<String, ?>) objectMapper.readValue(content, Map.class).get("data"));
 		return (String) data.get("webappVersion");
@@ -182,7 +177,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 			final FortifyCurlProcessor processor) {
 		// Use the preempted authentication processor
 		processor.setFortifyToken(null);
-		final CurlRequest request = new CurlRequest("GET", StringUtils.appendIfMissing(url, "/") + API_TOKEN, null,
+		final CurlRequest request = new CurlRequest("GET", Strings.CS.appendIfMissing(url, "/") + API_TOKEN, null,
 				"Accept:application/json", HttpHeaders.AUTHORIZATION + ":Basic "
 						+ BASE64_CODEC.encodeToString((user + ':' + password).getBytes(StandardCharsets.UTF_8)));
 		request.setSaveResponse(true);
@@ -344,13 +339,13 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 */
 	private Object getFortifyResource(final Map<String, String> parameters, final String resource,
 			final FortifyCurlProcessor processor) throws IOException {
-		final String url = StringUtils.appendIfMissing(parameters.get(PARAMETER_URL), "/") + resource;
+		final String url = Strings.CS.appendIfMissing(parameters.get(PARAMETER_URL), "/") + resource;
 		final CurlRequest request = new CurlRequest("GET", url, null, "Accept: application/json");
 		request.setSaveResponse(true);
 		processor.process(request);
 
 		// Parse the JSON response
-		final String content = ObjectUtils.defaultIfNull(request.getResponse(), "{}");
+		final String content = ObjectUtils.getIfNull(request.getResponse(), "{}");
 		return objectMapper.readValue(content, Map.class).get("data");
 	}
 
