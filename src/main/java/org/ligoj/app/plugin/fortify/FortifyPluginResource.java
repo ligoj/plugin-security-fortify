@@ -3,7 +3,6 @@
  */
 package org.ligoj.app.plugin.fortify;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.apache.commons.codec.binary.Base64;
@@ -28,8 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.Format;
 import java.util.Collection;
@@ -51,7 +50,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	private static final String API_PROJECTS = "api/v1/projects/";
 	private static final String API_TOKEN = "api/v1/auth/token";
 
-	private static final Base64 BASE64_CODEC = new Base64(0);
+	private static final Base64 BASE64_CODEC = Base64.builder().setLineLength(0).get();
 
 	/**
 	 * Plug-in key.
@@ -64,7 +63,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	public static final String KEY = URL.replace('/', ':').substring(1);
 
 	/**
-	 * Web site URL
+	 * Website URL
 	 */
 	public static final String PARAMETER_URL = KEY + ":url";
 
@@ -79,7 +78,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	public static final String PARAMETER_VERSION = KEY + ":version";
 
 	/**
-	 * Fortify user name able to perform index.
+	 * Fortify username able to perform index.
 	 */
 	public static final String PARAMETER_USER = KEY + ":user";
 
@@ -107,7 +106,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String getVersion(final Map<String, String> parameters) throws Exception {
+	public String getVersion(final Map<String, String> parameters) {
 		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
 		final String url = Strings.CS.appendIfMissing(parameters.get(PARAMETER_URL), "/") + "api/v1/userSession/info";
 		final CurlRequest request = new CurlRequest("POST", url, "{}", "Accept: application/json");
@@ -121,12 +120,12 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	}
 
 	@Override
-	public boolean checkStatus(final Map<String, String> parameters) throws Exception {
+	public boolean checkStatus(final Map<String, String> parameters) {
 		return StringUtils.isNotEmpty(this.getVersion(parameters));
 	}
 
 	@Override
-	public SubscriptionStatusWithData checkSubscriptionStatus(final Map<String, String> parameters) throws Exception {
+	public SubscriptionStatusWithData checkSubscriptionStatus(final Map<String, String> parameters) {
 		final SubscriptionStatusWithData nodeStatusWithData = new SubscriptionStatusWithData();
 		nodeStatusWithData.put("project", validateProject(parameters));
 		return nodeStatusWithData;
@@ -154,7 +153,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 			return token;
 		}
 		return curlCacheToken.getTokenCache(FortifyProject.class, cacheToken,
-				k -> getFortifyToken(url, user, password, processor), 1,
+				_ -> getFortifyToken(url, user, password, processor), 1,
 				() -> new ValidationJsonException(PARAMETER_URL, "fortify-login"));
 	}
 
@@ -179,7 +178,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 		processor.setFortifyToken(null);
 		final CurlRequest request = new CurlRequest("GET", Strings.CS.appendIfMissing(url, "/") + API_TOKEN, null,
 				"Accept:application/json", HttpHeaders.AUTHORIZATION + ":Basic "
-						+ BASE64_CODEC.encodeToString((user + ':' + password).getBytes(StandardCharsets.UTF_8)));
+				+ BASE64_CODEC.encodeToString((user + ':' + password).getBytes(StandardCharsets.UTF_8)));
 		request.setSaveResponse(true);
 		if (!processor.process(request)) {
 			return null;
@@ -214,14 +213,12 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 *
 	 * @param parameters The project parameters.
 	 * @return <code>true</code> if the project exists.
-	 * @throws IOException When Fortify JSON content cannot be parsed.
 	 */
-	protected FortifyProject validateProject(final Map<String, String> parameters) throws IOException {
+	protected FortifyProject validateProject(final Map<String, String> parameters) {
 		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
 		try {
 			// Check the project exists and get the name
-			@SuppressWarnings("unchecked")
-			final Map<String, Object> projectMap = MapUtils
+			@SuppressWarnings("unchecked") final Map<String, Object> projectMap = MapUtils
 					.emptyIfNull((Map<String, Object>) getFortifyResource(parameters,
 							API_PROJECTS + parameters.get(PARAMETER_KEY) + "?fields=id,name", processor));
 			if (projectMap.isEmpty()) {
@@ -232,16 +229,14 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 
 			// Check the projectVersion is within this project
 			final String version = parameters.get(PARAMETER_VERSION);
-			@SuppressWarnings("unchecked")
-			final List<Map<String, Object>> versions = (List<Map<String, Object>>) getFortifyResource(parameters,
+			@SuppressWarnings("unchecked") final List<Map<String, Object>> versions = (List<Map<String, Object>>) getFortifyResource(parameters,
 					API_PROJECTS + parameters.get(PARAMETER_KEY) + "/versions?fields=id,name", processor);
 			project.setVersion(versions.stream().filter(map -> map.get("id").toString().equals(version)).findFirst()
 					.orElseThrow(() -> new ValidationJsonException(PARAMETER_VERSION, "fortify-version")).get("name")
 					.toString());
 
 			// Get the project versions measures
-			@SuppressWarnings("unchecked")
-			final List<Map<String, Object>> measures = (List<Map<String, Object>>) getFortifyResource(parameters,
+			@SuppressWarnings("unchecked") final List<Map<String, Object>> measures = (List<Map<String, Object>>) getFortifyResource(parameters,
 					API_PROJECT_VERSIONS + version + "/performanceIndicatorHistories", processor);
 			measures.forEach(map -> project.getMeasures().put(map.get("id").toString(), map.get("value").toString()));
 			return project;
@@ -266,13 +261,12 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 * @param criteria the search criteria.
 	 * @param node     the node to be tested with given parameters.
 	 * @return project name.
-	 * @throws IOException When Fortify JSON content cannot be parsed.
 	 */
 	@GET
 	@Path("{node}/{criteria}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public List<FortifyProject> findAllByName(@PathParam("node") final String node,
-			@PathParam("criteria") final String criteria) throws IOException {
+			@PathParam("criteria") final String criteria) {
 		return inMemoryPagination
 				.newPage(findAll(node, "api/v1/projects?fields=id,name", criteria), PageRequest.of(0, 10)).getContent();
 	}
@@ -284,14 +278,12 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 * @param project  the project identifier
 	 * @param criteria the search criteria.
 	 * @return project name.
-	 * @throws IOException When Fortify JSON content cannot be parsed.
 	 */
 	@GET
 	@Path("versions/{node}/{project}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Collection<FortifyProject> findProjectVersions(@PathParam("node") final String node,
-			@PathParam("project") final String project, @PathParam("criteria") final String criteria)
-			throws IOException {
+			@PathParam("project") final String project, @PathParam("criteria") final String criteria) {
 		return findAll(node, API_PROJECTS + project + "/versions?fields=id,name", StringUtils.defaultString(criteria));
 	}
 
@@ -304,8 +296,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 * @param criteria Optional name to match.
 	 * @return Projects matching to the given criteria.
 	 */
-	private Collection<FortifyProject> findAll(final String node, final String url, final String criteria)
-			throws IOException {
+	private Collection<FortifyProject> findAll(final String node, final String url, final String criteria) {
 		// Check the user can log in to Fortify
 		final Collection<Map<String, Object>> data = getFortifyResource(this.pvResource.getNodeParameters(node), url);
 		final Format format = new NormalizeFormat();
@@ -326,10 +317,10 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 */
 	@SuppressWarnings("unchecked")
 	private Collection<Map<String, Object>> getFortifyResource(final Map<String, String> parameters,
-			final String resource) throws IOException {
+			final String resource) {
 		final FortifyCurlProcessor processor = newFortifyCurlProcessor(parameters);
 		Collection<Map<String, Object>> result = CollectionUtils
-				.emptyIfNull((List<Map<String, Object>>) getFortifyResource(parameters, resource, processor));
+				.emptyIfNull((Collection<Map<String, Object>>) getFortifyResource(parameters, resource, processor));
 		processor.close();
 		return result;
 	}
@@ -338,7 +329,7 @@ public class FortifyPluginResource extends AbstractToolPluginResource implements
 	 * Fetch given node from parameters and given URL, and return the JSON object.
 	 */
 	private Object getFortifyResource(final Map<String, String> parameters, final String resource,
-			final FortifyCurlProcessor processor) throws IOException {
+			final FortifyCurlProcessor processor) {
 		final String url = Strings.CS.appendIfMissing(parameters.get(PARAMETER_URL), "/") + resource;
 		final CurlRequest request = new CurlRequest("GET", url, null, "Accept: application/json");
 		request.setSaveResponse(true);
