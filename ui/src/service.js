@@ -11,14 +11,18 @@
  *   - renderDetailsKey → the project-version chip
  *     (`service:security:fortify:version`).
  *
+ *   - parameterField   → the subscribe-wizard inputs: the project, searched
+ *     among the projects of the instance, then its version
+ *     (legacy `configureSubscriptionParameters`).
+ *
  * The legacy live audit pie / rating chips read `subscription.data` and
  * are omitted here, like the other live-data carousels.
- *
- * Kept free of Vue SFC imports so it can be unit-tested without a DOM.
  */
-import { renderServiceLink, renderDetailsChip, useI18nStore } from '@ligoj/host'
+import { renderServiceLink, renderDetailsChip, useI18nStore, remoteSearchField } from '@ligoj/host'
+import FortifyVersionField from './fields/FortifyVersionField.vue'
 
 const PARAM_URL = 'service:security:fortify:url'
+const PARAM_PROJECT = 'service:security:fortify:pkey'
 const PARAM_VERSION = 'service:security:fortify:version'
 
 /** Fortify SSC flex link. Mirrors the legacy renderFeatures(). */
@@ -40,4 +44,19 @@ function renderDetailsKey(subscription) {
   return renderDetailsChip({ icon: 'mdi-shield-check', text: version, title: t('service:security:fortify:version') })
 }
 
-export default { renderFeatures, renderDetailsKey }
+// Subscribe-wizard inputs: the project is searched among the projects of the
+// selected instance, then its version is picked among the versions of the project.
+const PARAMETER_FIELDS = {
+  [PARAM_PROJECT]: remoteSearchField({ path: 'rest/service/security/fortify' }),
+  [PARAM_VERSION]: FortifyVersionField,
+}
+
+/**
+ * Subscribe-wizard hook: the project and version inputs. Null for every other
+ * parameter and when editing a node: the default type-based input is rendered.
+ */
+function parameterField({ parameter, isNode } = {}) {
+  return isNode ? null : PARAMETER_FIELDS[parameter?.id] || null
+}
+
+export default { renderFeatures, renderDetailsKey, parameterField }
